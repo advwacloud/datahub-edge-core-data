@@ -3,34 +3,20 @@ package clients
 import (
 	"errors"
 	"fmt"
+	"os"
 
+	// models "github.com/advwacloud/datahub-edge-domain-models"
 	models "github.com/advwacloud/datahub-edge-domain-models"
-	//"datahub-edge-core/pkg/models" // temporary
-
-	"gopkg.in/mgo.v2/bson"
 )
 
-type DatabaseType int8 // Database type enum
-const (
-	MONGO DatabaseType = iota
-)
-
-type DBClient interface {
-	Datas() ([]models.Data, error)
-
-	DataById(id string) (models.Data, error)
-
-	AddData(r models.Data) (bson.ObjectId, error)
-
-	UpdateData(r models.Data) error
-
-	DeleteDataById(id string) error
+type dbClient interface {
+	AddData(r models.Data) error
 }
 
 type DBConfiguration struct {
-	DbType       DatabaseType
+	DbType       string
 	Host         string
-	Port         int
+	Port         string
 	Timeout      int
 	DatabaseName string
 	Username     string
@@ -42,11 +28,24 @@ var ErrUnsupportedDatabase error = errors.New("Unsuppored database type")
 var ErrInvalidObjectId error = errors.New("Invalid object ID")
 var ErrNotUnique error = errors.New("Resource already exists")
 
+var Dbc dbClient
+
+func init() {
+	// Create a database client
+	Dbc, _ = newDBClient(DBConfiguration{
+		DbType:       os.Getenv("DB_TYPE"),
+		Host:         os.Getenv("MONGODB_HOST"),
+		Port:         os.Getenv("MONGODB_PORT"),
+		DatabaseName: os.Getenv("MONGODB_DATABASE_NAME"),
+		Username:     os.Getenv("MONGODB_USER"),
+		Password:     os.Getenv("MONGODB_PWD"),
+	})
+}
+
 // Return the dbClient interface
-func NewDBClient(config DBConfiguration) (DBClient, error) {
-	var dbClient DBClient
+func newDBClient(config DBConfiguration) (dbClient, error) {
 	switch config.DbType {
-	case MONGO:
+	case "MONGO":
 		// Create the mongo client
 		mc, err := newMongoClient(config)
 		if err != nil {
@@ -57,6 +56,4 @@ func NewDBClient(config DBConfiguration) (DBClient, error) {
 	default:
 		return nil, ErrUnsupportedDatabase
 	}
-
-	return dbClient, nil
 }
