@@ -2,23 +2,32 @@ package subscriber
 
 import (
 	"context"
-	"time"
+	"fmt"
 
-	log "github.com/micro/go-micro/v2/logger"
+	//"time"
+
+	"github.com/golang/protobuf/ptypes"
 
 	"core-data/clients"
-	coredata "core-data/proto/core-data"
 
-	models "github.com/advwacloud/datahub-edge-domain-models"
+	core "github.com/advwacloud/datahub-edge-domain-models/protos/core-data"
+
+	models "github.com/advwacloud/datahub-edge-domain-models/models"
+	log "github.com/micro/go-micro/v2/logger"
 )
 
 type CoreData struct{}
 
-func (e *CoreData) Handle(ctx context.Context, msg *coredata.Message) error {
+func (e *CoreData) Handle(ctx context.Context, msg *core.Message) error {
 	log.Info("Handler Received message: ", msg.SourceId)
 
-	ts, _ := time.Parse(time.RFC3339, msg.Time)
+	fmt.Println(".....")
+	fmt.Println(msg.Time)
+
+	ts, _ := ptypes.Timestamp(msg.Time)
 	sid := msg.SourceId
+
+	fmt.Println(ts)
 
 	for _, tag := range msg.Data {
 		var data models.Data
@@ -35,12 +44,20 @@ func (e *CoreData) Handle(ctx context.Context, msg *coredata.Message) error {
 		} else {
 			data.Value = number
 		}
+
+		// if data.Created.IsZero() {
+		// 	fmt.Printf("No date has been set, %s\n", data.Created)
+		// 	data.Created = time.Now()
+		// }
+
+		fmt.Println("-----")
+		fmt.Println(data)
 		clients.Dbc.AddData(data)
 	}
 	return nil
 }
 
-func Handler(ctx context.Context, msg *coredata.Message) error {
+func Handler(ctx context.Context, msg *core.Message) error {
 	log.Info("Function Received message: ", msg.SourceId)
 
 	return nil

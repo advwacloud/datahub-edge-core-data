@@ -6,7 +6,7 @@ import (
 	"os"
 
 	// models "github.com/advwacloud/datahub-edge-domain-models"
-	models "github.com/advwacloud/datahub-edge-domain-models"
+	models "github.com/advwacloud/datahub-edge-domain-models/models"
 )
 
 type dbClient interface {

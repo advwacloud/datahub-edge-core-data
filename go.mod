@@ -5,7 +5,7 @@ go 1.13
 replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 
 require (
-	github.com/advwacloud/datahub-edge-domain-models v0.0.0-20201007035512-e747a252d3bf
+	github.com/advwacloud/datahub-edge-domain-models v0.0.0-20201015072722-0e67c490edc9 // indirect
 	github.com/edgexfoundry/core-data-go v0.0.0-20180105155421-58619b9a0201
 	github.com/edgexfoundry/core-domain-go v0.0.0-20180130224812-7acdb6490aba // indirect
 	github.com/golang/protobuf v1.4.2

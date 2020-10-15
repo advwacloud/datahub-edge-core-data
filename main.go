@@ -8,7 +8,8 @@ import (
 	"core-data/handler"
 	"core-data/subscriber"
 
-	coredata "core-data/proto/core-data"
+	core "github.com/advwacloud/datahub-edge-domain-models/protos/core-data"
+	//coredata "core-data/proto/core-data"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	service.Init()
 
 	// Register Handler
-	coredata.RegisterCoreDataHandler(service.Server(), new(handler.CoreData))
+	core.RegisterCoreDataHandler(service.Server(), new(handler.CoreData))
 
 	// Register Struct as Subscriber
 	micro.RegisterSubscriber("go.micro.service.core-data", service.Server(), new(subscriber.CoreData))
