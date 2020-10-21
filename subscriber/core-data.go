@@ -21,13 +21,8 @@ type CoreData struct{}
 func (e *CoreData) Handle(ctx context.Context, msg *core.Message) error {
 	log.Info("Handler Received message: ", msg.SourceId)
 
-	fmt.Println(".....")
-	fmt.Println(msg.Time)
-
 	ts, _ := ptypes.Timestamp(msg.Time)
 	sid := msg.SourceId
-
-	fmt.Println(ts)
 
 	for _, tag := range msg.Data {
 		var data models.Data
@@ -49,8 +44,6 @@ func (e *CoreData) Handle(ctx context.Context, msg *core.Message) error {
 		// 	fmt.Printf("No date has been set, %s\n", data.Created)
 		// 	data.Created = time.Now()
 		// }
-
-		fmt.Println("-----")
 		fmt.Println(data)
 		clients.Dbc.AddData(data)
 	}
